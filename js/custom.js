@@ -1,85 +1,151 @@
-/**
- * myStore Theme Custom Functionality
- *
- */
-( function( $ ) {
-    
-    jQuery( document ).ready( function() {
-        
-        // Add button to sub-menu item to show nested pages / Only used on mobile
-        $( '.main-navigation li.page_item_has_children, .main-navigation li.menu-item-has-children' ).prepend( '<span class="menu-dropdown-btn"><i class="fa fa-angle-down"></i></span>' );
-        // Mobile nav button functionality
-        $( '.menu-dropdown-btn' ).bind( 'click', function() {
-            $(this).parent().toggleClass( 'open-page-item' );
-        });
-        
-        // Show / Hide Search
-        $('.menu-search .fa-search.search-btn').toggle(function(){
-            $('body').addClass('show-site-search');
-            $('.site-header .search-block').animate( { opacity: '1' }, 200 );
-            $(".site-header .search-field").focus();
-        },function(){
-            $('.site-header .search-block').animate( { opacity: '0' }, 200 );
-            $('body').removeClass('show-site-search');
-        });
-        
-        // The menu button
-        $('.header-menu-button').click(function(e){
-            $('body').toggleClass('show-main-menu');
-        });
-        
-        $('.main-menu-close').click(function(e){
-            $('.header-menu-button').click();
-        });
-		
-    });
-    
-    $(window).resize(function () {
-        
-        
-        
-    }).resize();
-    
-    $(window).load(function() {
-        
-        mystore_home_slider();
-        
-    });
-    
-    // Hide Search is user clicks anywhere else
-    $(document).mouseup(function (e) {
-        var container = $('.site-header .search-block');
-        if (!container.is(e.target) && container.has(e.target).length === 0) {
-            $('.site-header .search-block').animate( { opacity: '0' }, 200 );
-            $('body').removeClass('show-site-search');
+/* ========================================================================= */
+/*	Preloader
+/* ========================================================================= */
+
+jQuery(window).load(function(){
+
+	$("#preloader").fadeOut("slow");
+
+});
+
+
+$(document).ready(function(){
+
+	/* ========================================================================= */
+	/*	Menu item highlighting
+	/* ========================================================================= */
+
+	jQuery('#nav').singlePageNav({
+		offset: jQuery('#nav').outerHeight(),
+		filter: ':not(.external)',
+		speed: 1200,
+		currentClass: 'current',
+		easing: 'easeInOutExpo',
+		updateHash: true,
+		beforeStart: function() {
+			console.log('begin scrolling');
+		},
+		onComplete: function() {
+			console.log('done scrolling');
+		}
+	});
+	
+    $(window).scroll(function () {
+        if ($(window).scrollTop() > 400) {
+            $("#navigation").css("background-color","#0EB493");
+        } else {
+            $("#navigation").css("background-color","rgba(16, 22, 54, 0.2)");
         }
     });
-    
-    function mystore_home_slider() {
-        
-        $(".home-slider").carouFredSel({
-            responsive: true,
-            circular: true,
-            infinite: false,
-            width: 1200,
-            height: 'variable',
-            items: {
-                visible: 1,
-                width: 1200,
-                height: 'variable'
-            },
-            onCreate: function(items) {
-                $(".home-slider-wrap").removeClass("home-slider-remove");
-            },
-            scroll: {
-                fx: 'uncover-fade',
-                duration: 450
-            },
-            auto: 5800,
-            prev: ".home-slider-prev",
-            next: ".home-slider-next"
-        });
-        
-    }
-    
-} )( jQuery );
+	
+	/* ========================================================================= */
+	/*	Fix Slider Height
+	/* ========================================================================= */	
+
+	var slideHeight = $(window).height();
+	
+	$('#slider, .carousel.slide, .carousel-inner, .carousel-inner .item').css('height',slideHeight);
+
+	$(window).resize(function(){'use strict',
+		$('#slider, .carousel.slide, .carousel-inner, .carousel-inner .item').css('height',slideHeight);
+	});
+	
+	
+	/* ========================================================================= */
+	/*	Portfolio Filtering
+	/* ========================================================================= */	
+	
+	
+    // portfolio filtering
+
+    $(".project-wrapper").mixItUp();
+	
+	
+	$(".fancybox").fancybox({
+		padding: 0,
+
+		openEffect : 'elastic',
+		openSpeed  : 650,
+
+		closeEffect : 'elastic',
+		closeSpeed  : 550,
+
+		closeClick : true,
+	});
+	
+	/* ========================================================================= */
+	/*	Parallax
+	/* ========================================================================= */	
+	
+	$('#facts').parallax("50%", 0.3);
+	
+	/* ========================================================================= */
+	/*	Timer count
+	/* ========================================================================= */
+
+	"use strict";
+    $(".number-counters").appear(function () {
+        $(".number-counters [data-to]").each(function () {
+            var e = $(this).attr("data-to");
+            $(this).delay(6e3).countTo({
+                from: 50,
+                to: e,
+                speed: 3e3,
+                refreshInterval: 50
+            })
+        })
+    });
+	
+	/* ========================================================================= */
+	/*	Back to Top
+	/* ========================================================================= */
+	
+	
+    $(window).scroll(function () {
+        if ($(window).scrollTop() > 400) {
+            $("#back-top").fadeIn(200)
+        } else {
+            $("#back-top").fadeOut(200)
+        }
+    });
+    $("#back-top").click(function () {
+        $("html, body").stop().animate({
+            scrollTop: 0
+        }, 1500, "easeInOutExpo")
+    });
+	
+});
+
+
+// ==========  START GOOGLE MAP ========== //
+function initialize() {
+    var myLatLng = new google.maps.LatLng(22.402789, 91.822156);
+
+    var mapOptions = {
+        zoom: 14,
+        center: myLatLng,
+        disableDefaultUI: true,
+        scrollwheel: false,
+        navigationControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        draggable: false,
+        mapTypeControlOptions: {
+            mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'roadatlas']
+        }
+    };
+
+    var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: 'img/location-icon.png',
+        title: '',
+    });
+
+}
+
+google.maps.event.addDomListener(window, "load", initialize);
+// ========== END GOOGLE MAP ========== //
